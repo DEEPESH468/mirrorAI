@@ -1,3 +1,9 @@
+"""Skin analysis service placeholder.
+
+Skin analysis remains scaffolded while the current implementation focuses on
+local face detection, face mesh, and face-shape classification.
+"""
+
 from python.models.schemas import AiModuleResult
 
 

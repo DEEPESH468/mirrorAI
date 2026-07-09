@@ -1,16 +1,24 @@
 # MirrorAI
 
-MirrorAI is a production-focused Next.js 15 website for a premium unisex salon. Guests can upload a portrait or use their camera through the existing frontend while the backend is prepared for future self-hosted salon AI modules.
+MirrorAI is a production-focused Next.js 15 website for a premium unisex salon. Guests can upload a portrait or use their camera through the existing frontend while the backend runs a local open-source face AI core.
 
 The app is intentionally built for one classy salon brand. It is not a SaaS product and does not include authentication, payments, database storage, admin dashboards, booking, or multi-tenant accounts.
 
 ## Architecture
 
 - Frontend: Next.js 15 App Router, React 19, TypeScript strict mode, Tailwind CSS, Framer Motion, Lucide Icons
-- Local backend: Python FastAPI
+- Local backend: Python FastAPI with OpenCV, MediaPipe, NumPy, Pillow, InsightFace, ONNX Runtime, and Segment Anything dependencies
 - Integration boundary: reusable Next.js proxy route and TypeScript service wrappers
 
-The browser posts images to the Next route `/api/ai/[product]`. Next forwards the multipart request to the local FastAPI backend at `MIRRORAI_AI_BACKEND_URL`. AI modules are intentionally scaffolded only and return structured `not_implemented` module statuses.
+The browser posts images to the Next route `/api/ai/[product]`. Next forwards the multipart request to the local FastAPI backend at `MIRRORAI_AI_BACKEND_URL`.
+
+The implemented AI core currently supports:
+
+- Face detection with MediaPipe Face Detection
+- Face mesh extraction with MediaPipe Face Mesh, returning 468 landmarks
+- Face-shape detection for `oval`, `round`, `square`, `rectangle`, `diamond`, `heart`, and `triangle`
+
+Hairstyle and beard overlays are not implemented yet. Those modules remain local placeholders and do not call remote provider services.
 
 ## Getting Started
 
@@ -24,10 +32,13 @@ cp .env.example .env.local
 Install the local AI backend:
 
 ```bash
-python3 -m venv .venv
+python3.11 -m venv .venv
 . .venv/bin/activate
 pip install -r python/requirements.txt
 ```
+
+Use Python 3.10, 3.11, or 3.12 for the AI backend. MediaPipe and related local
+vision packages may not publish wheels for newer Python versions immediately.
 
 Run the backend in one terminal:
 
@@ -50,7 +61,7 @@ MIRRORAI_AI_BACKEND_URL=http://127.0.0.1:8000
 MIRRORAI_AI_TIMEOUT_MS=120000
 ```
 
-No remote service key is required.
+No remote service key is required. The backend uses only local open-source libraries.
 
 ## Supported Products
 
@@ -71,19 +82,77 @@ Payloads always include `image`, `product`, and `productName`. Try-on modules al
 - Hairstyle: `style_id`, `optionId`, `optionName`
 - Beard: `template_id`, `optionId`, `optionName`
 
-The scaffold backend returns:
+The `face-shape` product returns:
 
 ```ts
 {
   imageBase64?: string;
   aiResponse: {
     engine: string;
-    status: "not_implemented";
+    status: "completed";
+    faceDetection: {
+      confidence: number;
+      boundingBox: Record<string, number>;
+      keypoints: Record<string, { x: number; y: number }>;
+    };
+    faceMesh: {
+      landmarkCount: 468;
+      landmarks: Array<{
+        index: number;
+        x: number;
+        y: number;
+        z: number;
+        pixelX: number;
+        pixelY: number;
+      }>;
+    };
+    faceShape: {
+      shape: "oval" | "round" | "square" | "rectangle" | "diamond" | "heart" | "triangle";
+      confidence: number;
+      measurements: Record<string, number>;
+      explanation: string;
+    };
     modules: Array<unknown>;
   };
   report: Record<string, unknown>;
 }
 ```
+
+Other product routes currently include the face-core output plus local
+`not_implemented` statuses for future hair, makeup, skin, recommendation, and
+overlay modules.
+
+## Face Core REST API
+
+FastAPI also exposes dedicated face endpoints. All endpoints accept multipart
+form data with an `image` file.
+
+- `POST /api/face/detect`: returns primary face detection, confidence, keypoints, and bounding box
+- `POST /api/face/mesh`: returns detection plus 468 Face Mesh landmarks
+- `POST /api/face/shape`: returns detection, mesh, and face-shape classification
+- `POST /api/face/analyze`: returns the complete face-core result
+
+Validation and error behavior:
+
+- `400`: missing file, non-image upload, decode failure, image too small, or file larger than 10 MB
+- `422`: image is valid, but no face or no usable face mesh was found
+- `404`: unsupported product id on `/api/[product]`
+
+## AI Modules
+
+`python/utils/image.py`: validates uploads with FastAPI, verifies image data with Pillow, decodes RGB arrays with OpenCV, and enforces minimum size and maximum payload rules.
+
+`python/services/face_detection.py`: runs MediaPipe Face Detection locally and returns the highest-confidence face.
+
+`python/services/face_mesh.py`: runs MediaPipe Face Mesh locally with iris refinement disabled so the response contains exactly 468 landmarks.
+
+`python/services/face_shape.py`: classifies face shape from mesh geometry using cheekbone width, jaw width, forehead width, and face-height ratios.
+
+`python/services/face.py`: orchestrates detection, mesh extraction, and face-shape classification for product and REST endpoints.
+
+`python/routers/face.py`: exposes dedicated REST endpoints for detection, mesh, shape, and full analysis.
+
+`python/services/assets.py`, `hair.py`, `makeup.py`, `skin.py`, and `recommendation.py`: remain documented placeholders for future local modules. Hairstyle and beard overlays are intentionally not implemented in this pass.
 
 ## Project Structure
 
@@ -116,12 +185,16 @@ python/
   main.py
   routers/
     experience.py
+    face.py
   models/
     schemas.py
   services/
     assets.py
     consultation.py
     face.py
+    face_detection.py
+    face_mesh.py
+    face_shape.py
     hair.py
     makeup.py
     recommendation.py

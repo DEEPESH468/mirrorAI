@@ -1,8 +1,13 @@
+"""Product-level REST routes consumed by the existing Next.js frontend."""
+
 from fastapi import APIRouter, File, Form, HTTPException, UploadFile
 
 from python.models.schemas import ExperienceMetadata, ExperienceResponse, PRODUCT_IDS, is_product_id
 from python.services.consultation import prepare_consultation
-from python.utils.image import validate_image_upload
+from python.services.face_detection import FaceDetectionError
+from python.services.face_mesh import FaceMeshError
+from python.services.face_shape import FaceShapeError
+from python.utils.image import decode_image_upload
 
 
 router = APIRouter(prefix="/api", tags=["experience"])
@@ -20,7 +25,7 @@ async def process_experience(
         raise HTTPException(status_code=404, detail="Unsupported MirrorAI product.")
 
     try:
-        image_bytes = await validate_image_upload(image)
+        decoded_image = await decode_image_upload(image)
     except ValueError as exc:
         raise HTTPException(status_code=400, detail=str(exc)) from exc
 
@@ -31,7 +36,10 @@ async def process_experience(
         optionName=option_name,
     )
 
-    return prepare_consultation(metadata, len(image_bytes))
+    try:
+        return prepare_consultation(metadata, decoded_image)
+    except (FaceDetectionError, FaceMeshError, FaceShapeError) as exc:
+        raise HTTPException(status_code=422, detail=str(exc)) from exc
 
 
 @router.get("/products", response_model=list[str])

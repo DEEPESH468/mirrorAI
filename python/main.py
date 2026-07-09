@@ -1,7 +1,10 @@
+"""FastAPI application entrypoint for MirrorAI's local vision backend."""
+
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 from python.routers.experience import router as experience_router
+from python.routers.face import router as face_router
 
 
 app = FastAPI(
@@ -25,3 +28,4 @@ def health() -> dict[str, str]:
 
 
 app.include_router(experience_router)
+app.include_router(face_router)

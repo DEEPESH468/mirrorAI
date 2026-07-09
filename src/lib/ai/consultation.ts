@@ -10,7 +10,7 @@ export const aiProducts = [
   "hair-analysis"
 ] as const satisfies readonly ExperienceCategory[];
 
-export type AiModuleStatus = "not_implemented";
+export type AiModuleStatus = "completed" | "not_implemented" | "skipped";
 
 export type AiModuleContract = {
   id: string;

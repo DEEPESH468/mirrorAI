@@ -1,3 +1,10 @@
+"""Placeholder asset-alignment services.
+
+Hairstyle and beard overlays are intentionally not implemented in this AI-core
+pass. Future local segmentation/alignment modules can be attached here without
+changing the frontend contract.
+"""
+
 from python.models.schemas import AiModuleResult
 
 
