@@ -5,6 +5,8 @@ services, and the Next.js proxy. They intentionally expose structured face
 results instead of provider-specific payloads.
 """
 
+from __future__ import annotations
+
 from typing import Literal, TypeGuard
 
 from pydantic import BaseModel
@@ -42,6 +44,19 @@ FaceShapeLabel = Literal[
 ]
 SalonRenderKind = Literal["hairstyle", "beard", "hair-color"]
 HairColorId = Literal["black", "brown", "golden", "blonde", "silver", "red", "blue"]
+ConcernLevel = Literal["low", "moderate", "high"]
+HairDensityLabel = Literal["low", "medium", "high"]
+HairLengthLabel = Literal["very short", "short", "medium", "long"]
+HairTypeLabel = Literal["straight", "wavy", "curly", "coily"]
+SkinToneLabel = Literal["fair", "light", "medium", "tan", "deep"]
+RecommendationCategory = Literal[
+    "hairstyle",
+    "beard",
+    "hair-color",
+    "salon-treatment",
+    "product",
+]
+ReportExportFormat = Literal["json", "pdf"]
 
 
 def is_product_id(value: str) -> TypeGuard[ProductId]:
@@ -75,6 +90,79 @@ class SalonRenderResult(BaseModel):
     width: int
     height: int
     transform: dict[str, float | int | str]
+
+
+class HairAnalysisResult(BaseModel):
+    density: HairDensityLabel
+    densityScore: float
+    length: HairLengthLabel
+    lengthRatio: float
+    hairType: HairTypeLabel
+    curlScore: float
+    frizz: ConcernLevel
+    frizzScore: float
+    coverageRatio: float
+    confidence: float
+    notes: list[str]
+
+
+class SkinConcern(BaseModel):
+    level: ConcernLevel
+    score: float
+    confidence: float
+
+
+class SkinAnalysisResult(BaseModel):
+    acne: SkinConcern
+    wrinkles: SkinConcern
+    darkCircles: SkinConcern
+    redness: SkinConcern
+    oiliness: SkinConcern
+    skinTone: SkinToneLabel
+    toneRgb: dict[str, int]
+    confidence: float
+    disclaimer: str
+
+
+class MakeupRenderResult(BaseModel):
+    imageBase64: str
+    lookId: str
+    applied: list[str]
+    intensity: float
+    width: int
+    height: int
+
+
+class RecommendationItem(BaseModel):
+    category: RecommendationCategory
+    title: str
+    reason: str
+    confidence: float
+
+
+class RecommendationSet(BaseModel):
+    faceShape: FaceShapeResult | None = None
+    recommendedHairstyles: list[RecommendationItem]
+    recommendedBeardStyles: list[RecommendationItem]
+    recommendedHairColors: list[RecommendationItem]
+    recommendedSalonTreatments: list[RecommendationItem]
+    recommendedProducts: list[RecommendationItem]
+
+
+class ConsultationReport(BaseModel):
+    version: str
+    exportFormats: list[ReportExportFormat]
+    plannedExportFormats: list[ReportExportFormat] = []
+    product: ProductId
+    productName: str
+    status: Literal["completed", "partial"]
+    image: ImageInfo
+    faceShape: FaceShapeResult | None = None
+    hair: HairAnalysisResult | None = None
+    skin: SkinAnalysisResult | None = None
+    recommendations: RecommendationSet
+    salonRender: SalonRenderResult | MakeupRenderResult | None = None
+    disclaimer: str
 
 
 class ImageInfo(BaseModel):

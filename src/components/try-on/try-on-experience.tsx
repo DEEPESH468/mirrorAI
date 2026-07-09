@@ -422,6 +422,7 @@ export function TryOnExperience() {
                       comparison={comparison}
                       onComparisonChange={setComparison}
                       productName={product.name}
+                      report={result.report}
                       reportItems={reportItems}
                       resultSource={resultSource}
                     />
@@ -483,6 +484,7 @@ function ResultView({
   comparison,
   onComparisonChange,
   productName,
+  report,
   reportItems,
   resultSource
 }: {
@@ -490,6 +492,7 @@ function ResultView({
   comparison: number;
   onComparisonChange: (value: number) => void;
   productName: string;
+  report?: Record<string, unknown>;
   reportItems: Array<{ label: string; value: string }>;
   resultSource?: string;
 }) {
@@ -545,6 +548,16 @@ function ResultView({
           <Download aria-hidden="true" className="h-4 w-4" />
           Save
         </a>
+        {report ? (
+          <a
+            href={jsonDataUrl(report)}
+            download="mirrorai-consultation-report.json"
+            className="absolute right-4 top-[4.75rem] inline-flex h-11 items-center gap-2 rounded-lg bg-white px-4 text-sm font-semibold text-[var(--ink)]"
+          >
+            <FileText aria-hidden="true" className="h-4 w-4" />
+            JSON
+          </a>
+        ) : null}
       </div>
     );
   }
@@ -557,6 +570,16 @@ function ResultView({
         Structured provider results are ready for a personalized consultation
         summary inside your salon journey.
       </p>
+      {report ? (
+        <a
+          href={jsonDataUrl(report)}
+          download="mirrorai-consultation-report.json"
+          className="mt-5 inline-flex h-11 items-center gap-2 rounded-lg bg-white px-4 text-sm font-semibold text-[var(--ink)]"
+        >
+          <Download aria-hidden="true" className="h-4 w-4" />
+          Download JSON
+        </a>
+      ) : null}
       <div className="mt-6 grid gap-3">
         {reportItems.length > 0 ? (
           reportItems.map((item) => (
@@ -607,6 +630,12 @@ function Panel({
       {children}
     </section>
   );
+}
+
+function jsonDataUrl(report: Record<string, unknown>) {
+  return `data:application/json;charset=utf-8,${encodeURIComponent(
+    JSON.stringify(report, null, 2)
+  )}`;
 }
 
 function buildReportItems(payload: unknown) {

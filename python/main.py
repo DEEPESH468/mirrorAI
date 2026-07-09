@@ -4,6 +4,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 from python.routers.experience import router as experience_router
+from python.routers.consultation import router as consultation_router
 from python.routers.face import router as face_router
 from python.routers.salon import router as salon_router
 
@@ -29,5 +30,6 @@ def health() -> dict[str, str]:
 
 
 app.include_router(experience_router)
+app.include_router(consultation_router)
 app.include_router(face_router)
 app.include_router(salon_router)

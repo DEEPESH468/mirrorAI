@@ -41,7 +41,7 @@ async def process_experience(
 
     try:
         return await run_in_threadpool(prepare_consultation, metadata, decoded_image)
-    except (AssetOverlayError, FaceDetectionError, FaceMeshError, FaceShapeError, HairColorError) as exc:
+    except (AssetOverlayError, FaceDetectionError, FaceMeshError, FaceShapeError, HairColorError, ValueError) as exc:
         raise HTTPException(status_code=422, detail=str(exc)) from exc
 
 

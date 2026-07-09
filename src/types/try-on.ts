@@ -32,4 +32,5 @@ export type ExperienceResult = {
   imageUrl?: string;
   imageBase64?: string;
   aiResponse: unknown;
+  report?: Record<string, unknown>;
 };

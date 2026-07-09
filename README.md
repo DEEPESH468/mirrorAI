@@ -131,8 +131,8 @@ The `face-shape` product returns:
 }
 ```
 
-Other product routes currently include the face-core output plus local
-module statuses for future makeup, skin, and recommendation modules.
+Product routes include face-core output, hair analysis, skin analysis, local
+makeup rendering, recommendations, and a JSON consultation report payload.
 
 ## Face Core REST API
 
@@ -152,9 +152,20 @@ multipart form data with an `image` file.
 - `POST /api/salon/hairstyle`: accepts `style_id` and aligns a transparent PNG hairstyle asset
 - `POST /api/salon/beard`: accepts `template_id` and aligns a transparent PNG beard asset
 - `POST /api/salon/hair-color`: accepts `color_id` and applies an OpenCV hair-color mask
+- `POST /api/salon/makeup`: accepts `look_id` and renders foundation, lipstick, blush, contour, eyeshadow, and eyeliner
 
 Rendering responses include `imageBase64`, output dimensions, and the transform
 metadata used by the module.
+
+## Consultation Report API
+
+- `POST /api/consultation/report`: returns a structured JSON consultation report
+
+The report includes face shape, hair density, hair length, hair type, frizz,
+cosmetic skin analysis, recommendations, confidence scores, and a disclaimer.
+The schema includes `exportFormats: ["json"]` and `plannedExportFormats:
+["pdf"]` so PDF export can be added later without reshaping the report
+contract.
 
 Validation and error behavior:
 
@@ -178,11 +189,17 @@ Validation and error behavior:
 
 `python/services/hair.py`: runs OpenCV hair-region masking and blends supported hair colors while preserving image luminance.
 
+`python/services/skin.py`: estimates acne-like visible spots, wrinkles, dark circles, redness, skin tone, and oiliness from local face-region image statistics. This is a cosmetic best-effort analysis, not a medical assessment.
+
+`python/services/makeup.py`: renders local virtual makeup for lipstick, foundation, blush, contour, eyeshadow, and eyeliner.
+
+`python/services/recommendation.py`: generates explainable hairstyle, beard, hair color, treatment, and product recommendations from face-shape, hair, and skin metrics.
+
 `python/routers/face.py`: exposes dedicated REST endpoints for detection, mesh, shape, and full analysis.
 
 `python/routers/salon.py`: exposes dedicated REST endpoints for hairstyle, beard, and hair-color rendering.
 
-`python/services/makeup.py`, `skin.py`, and `recommendation.py`: remain documented placeholders for future local modules.
+`python/routers/consultation.py`: exposes structured JSON consultation report export.
 
 Transparent PNG assets live in:
 

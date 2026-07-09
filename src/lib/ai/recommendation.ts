@@ -8,5 +8,5 @@ export type ConsultationRecommendation = {
 
 export const recommendationModule = createAiModule({
   id: "recommendation",
-  status: "not_implemented"
+  status: "completed"
 });
