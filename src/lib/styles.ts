@@ -1,0 +1,189 @@
+import type {
+  ExperienceCategory,
+  ExperienceOption,
+  ExperienceProduct
+} from "@/types/try-on";
+
+export const experienceProducts: ExperienceProduct[] = [
+  {
+    id: "skin-analysis",
+    mode: "analysis",
+    name: "AI Skin Analysis",
+    shortName: "Skin",
+    eyebrow: "Skin intelligence",
+    description:
+      "Scan a face image for skin concerns and turn the results into consultation-ready recommendations.",
+    endpointEnv: "YOUCAM_SKIN_ANALYSIS_ENDPOINT"
+  },
+  {
+    id: "makeup",
+    mode: "try-on",
+    name: "Virtual Makeup Try-On",
+    shortName: "Makeup",
+    eyebrow: "Makeup artistry",
+    description:
+      "Preview lipstick, foundation, eye makeup, blush, contour, or complete salon looks before a service.",
+    endpointEnv: "YOUCAM_MAKEUP_ENDPOINT",
+    optionLabel: "Select a makeup look"
+  },
+  {
+    id: "hair-color",
+    mode: "try-on",
+    name: "Hair Color Simulation",
+    shortName: "Color",
+    eyebrow: "Color preview",
+    description:
+      "Try refined salon shades before committing to color, gloss, highlights, or transformation work.",
+    endpointEnv: "YOUCAM_HAIR_COLOR_ENDPOINT",
+    optionLabel: "Select a shade"
+  },
+  {
+    id: "hairstyle",
+    mode: "try-on",
+    name: "Hairstyle Try-On",
+    shortName: "Haircut",
+    eyebrow: "Cut preview",
+    description:
+      "Preview cuts and silhouettes for all clients, then refine the final direction with a stylist.",
+    endpointEnv: "YOUCAM_HAIRSTYLE_ENDPOINT",
+    optionLabel: "Select a hairstyle"
+  },
+  {
+    id: "beard",
+    mode: "try-on",
+    name: "Beard Style Simulation",
+    shortName: "Beard",
+    eyebrow: "Grooming preview",
+    description:
+      "Preview beard and moustache styles for grooming, shaping, and consultation services.",
+    endpointEnv: "YOUCAM_BEARD_ENDPOINT",
+    optionLabel: "Select a beard style"
+  },
+  {
+    id: "face-shape",
+    mode: "analysis",
+    name: "Face Shape Analysis",
+    shortName: "Face Shape",
+    eyebrow: "Facial mapping",
+    description:
+      "Analyze face shape and attributes to guide haircuts, contouring, makeup, and grooming direction.",
+    endpointEnv: "YOUCAM_FACE_SHAPE_ENDPOINT"
+  },
+  {
+    id: "hair-analysis",
+    mode: "analysis",
+    name: "Hair Density and Hair-Type Analysis",
+    shortName: "Hair Health",
+    eyebrow: "Hair diagnostics",
+    description:
+      "Analyze hair type, density, length, and frizziness where supported by the selected endpoint.",
+    endpointEnv: "YOUCAM_HAIR_ANALYSIS_ENDPOINT"
+  }
+];
+
+export const experienceOptions: ExperienceOption[] = [
+  {
+    id: "soft-glam",
+    category: "makeup",
+    name: "Soft Glam",
+    description: "Polished skin, gentle contour, neutral eyes, and an elegant lip.",
+    accent: "#9f5f56",
+    providerField: "look_id"
+  },
+  {
+    id: "bridal-radiance",
+    category: "makeup",
+    name: "Bridal Radiance",
+    description: "Luminous complexion, defined eyes, and long-wear event finish.",
+    accent: "#b87b63",
+    providerField: "look_id"
+  },
+  {
+    id: "editorial-evening",
+    category: "makeup",
+    name: "Evening Definition",
+    description: "Sculpted features, richer eye depth, and a refined statement lip.",
+    accent: "#744c64",
+    providerField: "look_id"
+  },
+  {
+    id: "espresso-brunette",
+    category: "hair-color",
+    name: "Espresso Brunette",
+    description: "A deep dimensional brunette with a glossy salon finish.",
+    accent: "#4a3028",
+    providerField: "color_id"
+  },
+  {
+    id: "champagne-blonde",
+    category: "hair-color",
+    name: "Champagne Blonde",
+    description: "Soft beige-blonde brightness with a premium, diffused tone.",
+    accent: "#c7aa7a",
+    providerField: "color_id"
+  },
+  {
+    id: "copper-gloss",
+    category: "hair-color",
+    name: "Copper Gloss",
+    description: "Warm copper dimension for a confident but wearable refresh.",
+    accent: "#a8663d",
+    providerField: "color_id"
+  },
+  {
+    id: "buzzcut",
+    category: "hairstyle",
+    name: "Buzzcut",
+    description: "Crisp, minimal, and strong for a clean modern profile.",
+    accent: "#a8663d",
+    providerField: "style_id"
+  },
+  {
+    id: "crewcut",
+    category: "hairstyle",
+    name: "Crewcut",
+    description: "Classic short structure with enough length for salon texture.",
+    accent: "#586f5c",
+    providerField: "style_id"
+  },
+  {
+    id: "curtain",
+    category: "hairstyle",
+    name: "Curtain",
+    description: "A softer center-parted shape with movement through the front.",
+    accent: "#315b78",
+    providerField: "style_id"
+  },
+  {
+    id: "goatee",
+    category: "beard",
+    name: "Goatee",
+    description: "Focused chin and moustache definition with a sharper mouth frame.",
+    accent: "#7f4329",
+    providerField: "template_id"
+  },
+  {
+    id: "bandholz",
+    category: "beard",
+    name: "Bandholz",
+    description: "Fuller beard volume for a confident, statement grooming look.",
+    accent: "#3f4b42",
+    providerField: "template_id"
+  },
+  {
+    id: "anchor",
+    category: "beard",
+    name: "Anchor Beard",
+    description: "Sculpted chin and moustache balance with precise edges.",
+    accent: "#6b5a48",
+    providerField: "template_id"
+  }
+];
+
+export function getProductByCategory(category: ExperienceCategory) {
+  return experienceProducts.find((product) => product.id === category);
+}
+
+export function getOptionsByCategory(category: ExperienceCategory) {
+  return experienceOptions.filter((option) => option.category === category);
+}
