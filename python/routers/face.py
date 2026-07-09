@@ -1,6 +1,7 @@
 """REST endpoints for the MirrorAI local face core."""
 
 from fastapi import APIRouter, File, HTTPException, UploadFile
+from starlette.concurrency import run_in_threadpool
 
 from python.models.schemas import (
     FaceCoreResponse,
@@ -21,25 +22,25 @@ router = APIRouter(prefix="/api/face", tags=["face-core"])
 @router.post("/detect", response_model=FaceDetectionResponse)
 async def detect(image: UploadFile = File(...)) -> FaceDetectionResponse:
     decoded = await _decode_or_400(image)
-    return _run_or_422(lambda: detect_face(decoded))
+    return await _run_or_422(lambda: detect_face(decoded))
 
 
 @router.post("/mesh", response_model=FaceMeshResponse)
 async def mesh(image: UploadFile = File(...)) -> FaceMeshResponse:
     decoded = await _decode_or_400(image)
-    return _run_or_422(lambda: map_face_mesh(decoded))
+    return await _run_or_422(lambda: map_face_mesh(decoded))
 
 
 @router.post("/shape", response_model=FaceShapeResponse)
 async def shape(image: UploadFile = File(...)) -> FaceShapeResponse:
     decoded = await _decode_or_400(image)
-    return _run_or_422(lambda: detect_face_shape(decoded))
+    return await _run_or_422(lambda: detect_face_shape(decoded))
 
 
 @router.post("/analyze", response_model=FaceCoreResponse)
 async def analyze(image: UploadFile = File(...)) -> FaceCoreResponse:
     decoded = await _decode_or_400(image)
-    return _run_or_422(lambda: analyze_face(decoded))
+    return await _run_or_422(lambda: analyze_face(decoded))
 
 
 async def _decode_or_400(image: UploadFile):
@@ -49,8 +50,8 @@ async def _decode_or_400(image: UploadFile):
         raise HTTPException(status_code=400, detail=str(exc)) from exc
 
 
-def _run_or_422(callback):
+async def _run_or_422(callback):
     try:
-        return callback()
+        return await run_in_threadpool(callback)
     except (FaceDetectionError, FaceMeshError, FaceShapeError) as exc:
         raise HTTPException(status_code=422, detail=str(exc)) from exc

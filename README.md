@@ -17,8 +17,11 @@ The implemented AI core currently supports:
 - Face detection with MediaPipe Face Detection
 - Face mesh extraction with MediaPipe Face Mesh, returning 468 landmarks
 - Face-shape detection for `oval`, `round`, `square`, `rectangle`, `diamond`, `heart`, and `triangle`
+- Hairstyle try-on using transparent PNG assets aligned to Face Mesh landmarks
+- Beard try-on using transparent PNG assets aligned to jaw and mouth landmarks
+- Hair color simulation using OpenCV masking and local color blending
 
-Hairstyle and beard overlays are not implemented yet. Those modules remain local placeholders and do not call remote provider services.
+The browser camera flow, before/after comparison slider, and final image download are handled in the existing Next.js frontend.
 
 ## Getting Started
 
@@ -82,6 +85,16 @@ Payloads always include `image`, `product`, and `productName`. Try-on modules al
 - Hairstyle: `style_id`, `optionId`, `optionName`
 - Beard: `template_id`, `optionId`, `optionName`
 
+Supported hair color ids:
+
+- `black`
+- `brown`
+- `golden`
+- `blonde`
+- `silver`
+- `red`
+- `blue`
+
 The `face-shape` product returns:
 
 ```ts
@@ -119,8 +132,7 @@ The `face-shape` product returns:
 ```
 
 Other product routes currently include the face-core output plus local
-`not_implemented` statuses for future hair, makeup, skin, recommendation, and
-overlay modules.
+module statuses for future makeup, skin, and recommendation modules.
 
 ## Face Core REST API
 
@@ -131,6 +143,18 @@ form data with an `image` file.
 - `POST /api/face/mesh`: returns detection plus 468 Face Mesh landmarks
 - `POST /api/face/shape`: returns detection, mesh, and face-shape classification
 - `POST /api/face/analyze`: returns the complete face-core result
+
+## Virtual Salon REST API
+
+FastAPI exposes dedicated local rendering endpoints. All endpoints accept
+multipart form data with an `image` file.
+
+- `POST /api/salon/hairstyle`: accepts `style_id` and aligns a transparent PNG hairstyle asset
+- `POST /api/salon/beard`: accepts `template_id` and aligns a transparent PNG beard asset
+- `POST /api/salon/hair-color`: accepts `color_id` and applies an OpenCV hair-color mask
+
+Rendering responses include `imageBase64`, output dimensions, and the transform
+metadata used by the module.
 
 Validation and error behavior:
 
@@ -150,9 +174,31 @@ Validation and error behavior:
 
 `python/services/face.py`: orchestrates detection, mesh extraction, and face-shape classification for product and REST endpoints.
 
+`python/services/assets.py`: loads transparent PNG hairstyle and beard assets from `public/assets/salon`, then scales, rotates, and composites them using face landmarks.
+
+`python/services/hair.py`: runs OpenCV hair-region masking and blends supported hair colors while preserving image luminance.
+
 `python/routers/face.py`: exposes dedicated REST endpoints for detection, mesh, shape, and full analysis.
 
-`python/services/assets.py`, `hair.py`, `makeup.py`, `skin.py`, and `recommendation.py`: remain documented placeholders for future local modules. Hairstyle and beard overlays are intentionally not implemented in this pass.
+`python/routers/salon.py`: exposes dedicated REST endpoints for hairstyle, beard, and hair-color rendering.
+
+`python/services/makeup.py`, `skin.py`, and `recommendation.py`: remain documented placeholders for future local modules.
+
+Transparent PNG assets live in:
+
+```text
+public/assets/salon/
+  hairstyles/
+    buzzcut.png
+    crewcut.png
+    curtain.png
+    default.png
+  beards/
+    anchor.png
+    bandholz.png
+    goatee.png
+    default.png
+```
 
 ## Project Structure
 
@@ -202,4 +248,10 @@ python/
   utils/
     image.py
   requirements.txt
+
+public/
+  assets/
+    salon/
+      hairstyles/
+      beards/
 ```

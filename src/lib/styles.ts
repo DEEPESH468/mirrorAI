@@ -100,27 +100,59 @@ export const experienceOptions: ExperienceOption[] = [
     localField: "look_id"
   },
   {
-    id: "espresso-brunette",
+    id: "black",
     category: "hair-color",
-    name: "Espresso Brunette",
-    description: "A deep dimensional brunette with a glossy salon finish.",
-    accent: "#4a3028",
+    name: "Black",
+    description: "A deep natural black with a clean salon gloss.",
+    accent: "#191715",
     localField: "color_id"
   },
   {
-    id: "champagne-blonde",
+    id: "brown",
     category: "hair-color",
-    name: "Champagne Blonde",
-    description: "Soft beige-blonde brightness with a premium, diffused tone.",
-    accent: "#c7aa7a",
+    name: "Brown",
+    description: "A dimensional brunette tone for a polished everyday finish.",
+    accent: "#5c3824",
     localField: "color_id"
   },
   {
-    id: "copper-gloss",
+    id: "golden",
     category: "hair-color",
-    name: "Copper Gloss",
-    description: "Warm copper dimension for a confident but wearable refresh.",
-    accent: "#a8663d",
+    name: "Golden",
+    description: "Warm golden depth with a luminous salon effect.",
+    accent: "#bf8e34",
+    localField: "color_id"
+  },
+  {
+    id: "blonde",
+    category: "hair-color",
+    name: "Blonde",
+    description: "Soft blonde brightness with a premium diffused tone.",
+    accent: "#dabf7b",
+    localField: "color_id"
+  },
+  {
+    id: "silver",
+    category: "hair-color",
+    name: "Silver",
+    description: "Cool silver dimension for a refined statement finish.",
+    accent: "#bec2c6",
+    localField: "color_id"
+  },
+  {
+    id: "red",
+    category: "hair-color",
+    name: "Red",
+    description: "Rich red warmth for a confident color transformation.",
+    accent: "#9c2d26",
+    localField: "color_id"
+  },
+  {
+    id: "blue",
+    category: "hair-color",
+    name: "Blue",
+    description: "Cool blue tone for a vivid creative salon preview.",
+    accent: "#2a52a8",
     localField: "color_id"
   },
   {

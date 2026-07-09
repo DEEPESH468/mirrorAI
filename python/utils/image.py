@@ -7,6 +7,7 @@ modules can share later.
 """
 
 from dataclasses import dataclass
+from base64 import b64encode
 from io import BytesIO
 
 import cv2
@@ -70,3 +71,13 @@ async def decode_image_upload(image: UploadFile) -> DecodedImage:
         height=height,
         content_type=image.content_type,
     )
+
+
+def encode_png_data_url(rgb_image: np.ndarray) -> str:
+    success, encoded = cv2.imencode(".png", cv2.cvtColor(rgb_image, cv2.COLOR_RGB2BGR))
+
+    if not success:
+        raise ValueError("Unable to encode the rendered salon image.")
+
+    payload = b64encode(encoded.tobytes()).decode("ascii")
+    return f"data:image/png;base64,{payload}"

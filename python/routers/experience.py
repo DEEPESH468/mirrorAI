@@ -1,12 +1,15 @@
 """Product-level REST routes consumed by the existing Next.js frontend."""
 
 from fastapi import APIRouter, File, Form, HTTPException, UploadFile
+from starlette.concurrency import run_in_threadpool
 
 from python.models.schemas import ExperienceMetadata, ExperienceResponse, PRODUCT_IDS, is_product_id
+from python.services.assets import AssetOverlayError
 from python.services.consultation import prepare_consultation
 from python.services.face_detection import FaceDetectionError
 from python.services.face_mesh import FaceMeshError
 from python.services.face_shape import FaceShapeError
+from python.services.hair import HairColorError
 from python.utils.image import decode_image_upload
 
 
@@ -37,8 +40,8 @@ async def process_experience(
     )
 
     try:
-        return prepare_consultation(metadata, decoded_image)
-    except (FaceDetectionError, FaceMeshError, FaceShapeError) as exc:
+        return await run_in_threadpool(prepare_consultation, metadata, decoded_image)
+    except (AssetOverlayError, FaceDetectionError, FaceMeshError, FaceShapeError, HairColorError) as exc:
         raise HTTPException(status_code=422, detail=str(exc)) from exc
 
 

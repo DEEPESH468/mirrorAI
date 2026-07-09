@@ -40,6 +40,8 @@ FaceShapeLabel = Literal[
     "heart",
     "triangle",
 ]
+SalonRenderKind = Literal["hairstyle", "beard", "hair-color"]
+HairColorId = Literal["black", "brown", "golden", "blonde", "silver", "red", "blue"]
 
 
 def is_product_id(value: str) -> TypeGuard[ProductId]:
@@ -63,6 +65,16 @@ class ExperienceResponse(BaseModel):
     imageBase64: str | None = None
     aiResponse: dict[str, object]
     report: dict[str, object]
+
+
+class SalonRenderResult(BaseModel):
+    kind: SalonRenderKind
+    optionId: str
+    optionName: str | None = None
+    imageBase64: str
+    width: int
+    height: int
+    transform: dict[str, float | int | str]
 
 
 class ImageInfo(BaseModel):

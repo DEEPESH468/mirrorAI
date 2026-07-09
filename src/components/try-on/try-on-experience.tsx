@@ -60,6 +60,7 @@ export function TryOnExperience() {
   const [error, setError] = useState<string | null>(null);
   const [isProcessing, setIsProcessing] = useState(false);
   const [isCameraActive, setIsCameraActive] = useState(false);
+  const [comparison, setComparison] = useState(50);
   const videoRef = useRef<HTMLVideoElement | null>(null);
   const streamRef = useRef<MediaStream | null>(null);
 
@@ -98,6 +99,7 @@ export function TryOnExperience() {
     setPreviewUrl(URL.createObjectURL(file));
     setResult(null);
     setError(null);
+    setComparison(50);
   }
 
   async function startCamera() {
@@ -365,6 +367,7 @@ export function TryOnExperience() {
                     <div className="aspect-square overflow-hidden rounded-lg bg-[var(--ink)]">
                       <video
                         ref={videoRef}
+                        autoPlay
                         playsInline
                         muted
                         className="h-full w-full scale-x-[-1] object-cover"
@@ -415,6 +418,9 @@ export function TryOnExperience() {
                     </motion.div>
                   ) : result ? (
                     <ResultView
+                      beforeSource={previewUrl ?? undefined}
+                      comparison={comparison}
+                      onComparisonChange={setComparison}
                       productName={product.name}
                       reportItems={reportItems}
                       resultSource={resultSource}
@@ -473,10 +479,16 @@ export function TryOnExperience() {
 }
 
 function ResultView({
+  beforeSource,
+  comparison,
+  onComparisonChange,
   productName,
   reportItems,
   resultSource
 }: {
+  beforeSource?: string;
+  comparison: number;
+  onComparisonChange: (value: number) => void;
   productName: string;
   reportItems: Array<{ label: string; value: string }>;
   resultSource?: string;
@@ -484,16 +496,51 @@ function ResultView({
   if (resultSource) {
     return (
       <div className="absolute inset-0">
-        {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img
-          src={resultSource}
-          alt={`${productName} AI result`}
-          className="h-full w-full object-contain"
-        />
+        {beforeSource ? (
+          <div className="absolute inset-0">
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src={beforeSource}
+              alt={`${productName} before`}
+              className="absolute inset-0 h-full w-full object-contain"
+            />
+            <div
+              className="absolute inset-0 overflow-hidden"
+              style={{ clipPath: `inset(0 ${100 - comparison}% 0 0)` }}
+            >
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
+                src={resultSource}
+                alt={`${productName} after`}
+                className="h-full w-full object-contain"
+              />
+            </div>
+            <div
+              className="pointer-events-none absolute bottom-0 top-0 w-px bg-white/80"
+              style={{ left: `${comparison}%` }}
+            />
+            <input
+              type="range"
+              min="0"
+              max="100"
+              value={comparison}
+              aria-label="Before and after comparison"
+              onChange={(event) => onComparisonChange(Number(event.target.value))}
+              className="absolute inset-x-4 bottom-5 h-2 accent-white"
+            />
+          </div>
+        ) : (
+          // eslint-disable-next-line @next/next/no-img-element
+          <img
+            src={resultSource}
+            alt={`${productName} AI result`}
+            className="h-full w-full object-contain"
+          />
+        )}
         <a
           href={resultSource}
-          download
-          className="absolute bottom-4 right-4 inline-flex h-11 items-center gap-2 rounded-lg bg-white px-4 text-sm font-semibold text-[var(--ink)]"
+          download="mirrorai-salon-result.png"
+          className="absolute right-4 top-4 inline-flex h-11 items-center gap-2 rounded-lg bg-white px-4 text-sm font-semibold text-[var(--ink)]"
         >
           <Download aria-hidden="true" className="h-4 w-4" />
           Save
