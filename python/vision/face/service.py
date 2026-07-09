@@ -21,10 +21,10 @@ from python.models.schemas import (
     FaceShapeResponse,
     ImageInfo,
 )
-from python.services.face_detection import detect_primary_face
-from python.services.face_mesh import extract_face_mesh
-from python.services.face_shape import classify_face_shape
-from python.utils.image import DecodedImage
+from python.vision.face.detection import detect_primary_face
+from python.vision.face.mesh import extract_face_mesh
+from python.vision.face.shape import classify_face_shape
+from python.vision.utils.image import DecodedImage
 
 
 ENGINE_NAME = "MirrorAI local open-source face core"

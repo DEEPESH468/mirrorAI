@@ -1,11 +1,12 @@
 from python.models.schemas import ConsultationReport, ExperienceMetadata, ExperienceResponse
-from python.services.assets import prepare_asset_overlay, render_beard, render_hairstyle
-from python.services.face import analyze_face, face_module_result
-from python.services.hair import analyze_hair, hair_module_result, simulate_hair_color
-from python.services.makeup import makeup_module_result, render_makeup
-from python.services.recommendation import build_recommendations, recommendation_module_result
-from python.services.skin import analyze_skin, skin_module_result
-from python.utils.image import DecodedImage
+from python.vision.beard.service import prepare_beard_overlay, render_beard
+from python.vision.face.service import analyze_face, face_module_result
+from python.vision.hair.hairstyle import prepare_hairstyle_overlay, render_hairstyle
+from python.vision.hair.service import analyze_hair, hair_module_result, simulate_hair_color
+from python.vision.makeup.service import makeup_module_result, render_makeup
+from python.vision.reports.recommendation import build_recommendations, recommendation_module_result
+from python.vision.skin.service import analyze_skin, skin_module_result
+from python.vision.utils.image import DecodedImage
 
 
 def prepare_consultation(metadata: ExperienceMetadata, image: DecodedImage) -> ExperienceResponse:
@@ -31,7 +32,7 @@ def prepare_consultation(metadata: ExperienceMetadata, image: DecodedImage) -> E
         )
 
     if metadata.product == "hairstyle":
-        modules.append(prepare_asset_overlay("hairstyle"))
+        modules.append(prepare_hairstyle_overlay())
         salon_render = render_hairstyle(
             image=image,
             mesh=face_analysis.mesh,
@@ -40,7 +41,7 @@ def prepare_consultation(metadata: ExperienceMetadata, image: DecodedImage) -> E
         )
 
     if metadata.product == "beard":
-        modules.append(prepare_asset_overlay("beard"))
+        modules.append(prepare_beard_overlay())
         salon_render = render_beard(
             image=image,
             mesh=face_analysis.mesh,

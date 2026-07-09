@@ -8,8 +8,8 @@ import cv2
 import numpy as np
 
 from python.models.schemas import AiModuleResult, FaceMesh, SkinAnalysisResult, SkinConcern
-from python.services.landmarks import LEFT_EYE, RIGHT_EYE, bbox, face_mask, level, polygon_from_indices
-from python.utils.image import DecodedImage
+from python.vision.utils.landmarks import LEFT_EYE, RIGHT_EYE, bbox, face_mask, level, polygon_from_indices
+from python.vision.utils.image import DecodedImage
 
 
 DISCLAIMER = (

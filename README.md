@@ -175,25 +175,31 @@ Validation and error behavior:
 
 ## AI Modules
 
-`python/utils/image.py`: validates uploads with FastAPI, verifies image data with Pillow, decodes RGB arrays with OpenCV, and enforces minimum size and maximum payload rules.
+`python/vision/utils/image.py`: validates uploads with FastAPI, verifies image data with Pillow, decodes RGB arrays with OpenCV, and enforces minimum size and maximum payload rules.
 
-`python/services/face_detection.py`: runs MediaPipe Face Detection locally and returns the highest-confidence face.
+`python/vision/face/detection.py`: runs MediaPipe Face Detection locally and returns the highest-confidence face.
 
-`python/services/face_mesh.py`: runs MediaPipe Face Mesh locally with iris refinement disabled so the response contains exactly 468 landmarks.
+`python/vision/face/mesh.py`: runs MediaPipe Face Mesh locally with iris refinement disabled so the response contains exactly 468 landmarks.
 
-`python/services/face_shape.py`: classifies face shape from mesh geometry using cheekbone width, jaw width, forehead width, and face-height ratios.
+`python/vision/face/shape.py`: classifies face shape from mesh geometry using cheekbone width, jaw width, forehead width, and face-height ratios.
 
-`python/services/face.py`: orchestrates detection, mesh extraction, and face-shape classification for product and REST endpoints.
+`python/vision/face/service.py`: orchestrates detection, mesh extraction, and face-shape classification for product and REST endpoints.
 
-`python/services/assets.py`: loads transparent PNG hairstyle and beard assets from `public/assets/salon`, then scales, rotates, and composites them using face landmarks.
+`python/vision/utils/assets.py`: provides shared transparent PNG loading, scaling, geometry, and compositing helpers.
 
-`python/services/hair.py`: runs OpenCV hair-region masking and blends supported hair colors while preserving image luminance.
+`python/vision/hair/service.py`: runs OpenCV hair-region masking, hair analysis, and hair color blending while preserving image luminance.
 
-`python/services/skin.py`: estimates acne-like visible spots, wrinkles, dark circles, redness, skin tone, and oiliness from local face-region image statistics. This is a cosmetic best-effort analysis, not a medical assessment.
+`python/vision/hair/hairstyle.py`: aligns transparent PNG hairstyle assets with face landmarks.
 
-`python/services/makeup.py`: renders local virtual makeup for lipstick, foundation, blush, contour, eyeshadow, and eyeliner.
+`python/vision/beard/service.py`: aligns transparent PNG beard assets with jaw and mouth landmarks.
 
-`python/services/recommendation.py`: generates explainable hairstyle, beard, hair color, treatment, and product recommendations from face-shape, hair, and skin metrics.
+`python/vision/skin/service.py`: estimates acne-like visible spots, wrinkles, dark circles, redness, skin tone, and oiliness from local face-region image statistics. This is a cosmetic best-effort analysis, not a medical assessment.
+
+`python/vision/makeup/service.py`: renders local virtual makeup for lipstick, foundation, blush, contour, eyeshadow, and eyeliner.
+
+`python/vision/reports/recommendation.py`: generates explainable hairstyle, beard, hair color, treatment, and product recommendations from face-shape, hair, and skin metrics.
+
+`python/vision/reports/consultation.py`: builds the end-to-end consultation response and JSON report payload.
 
 `python/routers/face.py`: exposes dedicated REST endpoints for detection, mesh, shape, and full analysis.
 
@@ -247,23 +253,34 @@ src/
 python/
   main.py
   routers/
+    consultation.py
     experience.py
     face.py
+    salon.py
   models/
     schemas.py
-  services/
-    assets.py
-    consultation.py
-    face.py
-    face_detection.py
-    face_mesh.py
-    face_shape.py
-    hair.py
-    makeup.py
-    recommendation.py
-    skin.py
-  utils/
-    image.py
+  vision/
+    face/
+      detection.py
+      mesh.py
+      service.py
+      shape.py
+    hair/
+      hairstyle.py
+      service.py
+    beard/
+      service.py
+    skin/
+      service.py
+    makeup/
+      service.py
+    reports/
+      consultation.py
+      recommendation.py
+    utils/
+      assets.py
+      image.py
+      landmarks.py
   requirements.txt
 
 public/

@@ -4,13 +4,13 @@ from fastapi import APIRouter, File, Form, HTTPException, UploadFile
 from starlette.concurrency import run_in_threadpool
 
 from python.models.schemas import ConsultationReport, ExperienceMetadata
-from python.services.assets import AssetOverlayError
-from python.services.consultation import prepare_consultation
-from python.services.face_detection import FaceDetectionError
-from python.services.face_mesh import FaceMeshError
-from python.services.face_shape import FaceShapeError
-from python.services.hair import HairColorError
-from python.utils.image import decode_image_upload
+from python.vision.utils.assets import AssetOverlayError
+from python.vision.reports.consultation import prepare_consultation
+from python.vision.face.detection import FaceDetectionError
+from python.vision.face.mesh import FaceMeshError
+from python.vision.face.shape import FaceShapeError
+from python.vision.hair.service import HairColorError
+from python.vision.utils.image import decode_image_upload
 
 
 router = APIRouter(prefix="/api/consultation", tags=["consultation"])

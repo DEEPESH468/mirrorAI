@@ -9,7 +9,7 @@ import cv2
 import numpy as np
 
 from python.models.schemas import AiModuleResult, FaceMesh, MakeupRenderResult
-from python.services.landmarks import (
+from python.vision.utils.landmarks import (
     LEFT_EYE,
     LIPS,
     RIGHT_EYE,
@@ -18,7 +18,7 @@ from python.services.landmarks import (
     polygon_from_indices,
     softened,
 )
-from python.utils.image import DecodedImage, encode_png_data_url
+from python.vision.utils.image import DecodedImage, encode_png_data_url
 
 
 LOOKS = {

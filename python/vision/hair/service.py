@@ -10,8 +10,8 @@ import numpy as np
 
 from python.models.schemas import AiModuleResult
 from python.models.schemas import FaceMesh, HairAnalysisResult, HairColorId, SalonRenderResult
-from python.services.landmarks import level
-from python.utils.image import DecodedImage, encode_png_data_url
+from python.vision.utils.landmarks import level
+from python.vision.utils.image import DecodedImage, encode_png_data_url
 
 
 HAIR_COLORS: dict[str, tuple[int, int, int]] = {

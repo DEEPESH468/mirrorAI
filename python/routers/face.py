@@ -9,11 +9,11 @@ from python.models.schemas import (
     FaceMeshResponse,
     FaceShapeResponse,
 )
-from python.services.face import analyze_face, detect_face, detect_face_shape, map_face_mesh
-from python.services.face_detection import FaceDetectionError
-from python.services.face_mesh import FaceMeshError
-from python.services.face_shape import FaceShapeError
-from python.utils.image import decode_image_upload
+from python.vision.face.service import analyze_face, detect_face, detect_face_shape, map_face_mesh
+from python.vision.face.detection import FaceDetectionError
+from python.vision.face.mesh import FaceMeshError
+from python.vision.face.shape import FaceShapeError
+from python.vision.utils.image import decode_image_upload
 
 
 router = APIRouter(prefix="/api/face", tags=["face-core"])

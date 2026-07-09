@@ -4,14 +4,16 @@ from fastapi import APIRouter, File, Form, HTTPException, UploadFile
 from starlette.concurrency import run_in_threadpool
 
 from python.models.schemas import MakeupRenderResult, SalonRenderResult
-from python.services.assets import AssetOverlayError, render_beard, render_hairstyle
-from python.services.face import analyze_face
-from python.services.face_detection import FaceDetectionError
-from python.services.face_mesh import FaceMeshError
-from python.services.face_shape import FaceShapeError
-from python.services.hair import HairColorError, simulate_hair_color
-from python.services.makeup import render_makeup
-from python.utils.image import DecodedImage, decode_image_upload
+from python.vision.beard.service import render_beard
+from python.vision.face.service import analyze_face
+from python.vision.face.detection import FaceDetectionError
+from python.vision.face.mesh import FaceMeshError
+from python.vision.face.shape import FaceShapeError
+from python.vision.hair.hairstyle import render_hairstyle
+from python.vision.hair.service import HairColorError, simulate_hair_color
+from python.vision.makeup.service import render_makeup
+from python.vision.utils.assets import AssetOverlayError
+from python.vision.utils.image import DecodedImage, decode_image_upload
 
 
 router = APIRouter(prefix="/api/salon", tags=["virtual-salon"])
