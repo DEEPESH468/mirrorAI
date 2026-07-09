@@ -12,8 +12,7 @@ export const experienceProducts: ExperienceProduct[] = [
     shortName: "Skin",
     eyebrow: "Skin intelligence",
     description:
-      "Scan a face image for skin concerns and turn the results into consultation-ready recommendations.",
-    endpointEnv: "YOUCAM_SKIN_ANALYSIS_ENDPOINT"
+      "Scan a face image for skin concerns and turn the results into consultation-ready recommendations."
   },
   {
     id: "makeup",
@@ -23,7 +22,6 @@ export const experienceProducts: ExperienceProduct[] = [
     eyebrow: "Makeup artistry",
     description:
       "Preview lipstick, foundation, eye makeup, blush, contour, or complete salon looks before a service.",
-    endpointEnv: "YOUCAM_MAKEUP_ENDPOINT",
     optionLabel: "Select a makeup look"
   },
   {
@@ -34,7 +32,6 @@ export const experienceProducts: ExperienceProduct[] = [
     eyebrow: "Color preview",
     description:
       "Try refined salon shades before committing to color, gloss, highlights, or transformation work.",
-    endpointEnv: "YOUCAM_HAIR_COLOR_ENDPOINT",
     optionLabel: "Select a shade"
   },
   {
@@ -45,7 +42,6 @@ export const experienceProducts: ExperienceProduct[] = [
     eyebrow: "Cut preview",
     description:
       "Preview cuts and silhouettes for all clients, then refine the final direction with a stylist.",
-    endpointEnv: "YOUCAM_HAIRSTYLE_ENDPOINT",
     optionLabel: "Select a hairstyle"
   },
   {
@@ -56,7 +52,6 @@ export const experienceProducts: ExperienceProduct[] = [
     eyebrow: "Grooming preview",
     description:
       "Preview beard and moustache styles for grooming, shaping, and consultation services.",
-    endpointEnv: "YOUCAM_BEARD_ENDPOINT",
     optionLabel: "Select a beard style"
   },
   {
@@ -66,8 +61,7 @@ export const experienceProducts: ExperienceProduct[] = [
     shortName: "Face Shape",
     eyebrow: "Facial mapping",
     description:
-      "Analyze face shape and attributes to guide haircuts, contouring, makeup, and grooming direction.",
-    endpointEnv: "YOUCAM_FACE_SHAPE_ENDPOINT"
+      "Analyze face shape and attributes to guide haircuts, contouring, makeup, and grooming direction."
   },
   {
     id: "hair-analysis",
@@ -76,8 +70,7 @@ export const experienceProducts: ExperienceProduct[] = [
     shortName: "Hair Health",
     eyebrow: "Hair diagnostics",
     description:
-      "Analyze hair type, density, length, and frizziness where supported by the selected endpoint.",
-    endpointEnv: "YOUCAM_HAIR_ANALYSIS_ENDPOINT"
+      "Analyze hair type, density, length, and frizziness using local computer vision."
   }
 ];
 
@@ -88,7 +81,7 @@ export const experienceOptions: ExperienceOption[] = [
     name: "Soft Glam",
     description: "Polished skin, gentle contour, neutral eyes, and an elegant lip.",
     accent: "#9f5f56",
-    providerField: "look_id"
+    localField: "look_id"
   },
   {
     id: "bridal-radiance",
@@ -96,7 +89,7 @@ export const experienceOptions: ExperienceOption[] = [
     name: "Bridal Radiance",
     description: "Luminous complexion, defined eyes, and long-wear event finish.",
     accent: "#b87b63",
-    providerField: "look_id"
+    localField: "look_id"
   },
   {
     id: "editorial-evening",
@@ -104,7 +97,7 @@ export const experienceOptions: ExperienceOption[] = [
     name: "Evening Definition",
     description: "Sculpted features, richer eye depth, and a refined statement lip.",
     accent: "#744c64",
-    providerField: "look_id"
+    localField: "look_id"
   },
   {
     id: "espresso-brunette",
@@ -112,7 +105,7 @@ export const experienceOptions: ExperienceOption[] = [
     name: "Espresso Brunette",
     description: "A deep dimensional brunette with a glossy salon finish.",
     accent: "#4a3028",
-    providerField: "color_id"
+    localField: "color_id"
   },
   {
     id: "champagne-blonde",
@@ -120,7 +113,7 @@ export const experienceOptions: ExperienceOption[] = [
     name: "Champagne Blonde",
     description: "Soft beige-blonde brightness with a premium, diffused tone.",
     accent: "#c7aa7a",
-    providerField: "color_id"
+    localField: "color_id"
   },
   {
     id: "copper-gloss",
@@ -128,7 +121,7 @@ export const experienceOptions: ExperienceOption[] = [
     name: "Copper Gloss",
     description: "Warm copper dimension for a confident but wearable refresh.",
     accent: "#a8663d",
-    providerField: "color_id"
+    localField: "color_id"
   },
   {
     id: "buzzcut",
@@ -136,7 +129,7 @@ export const experienceOptions: ExperienceOption[] = [
     name: "Buzzcut",
     description: "Crisp, minimal, and strong for a clean modern profile.",
     accent: "#a8663d",
-    providerField: "style_id"
+    localField: "style_id"
   },
   {
     id: "crewcut",
@@ -144,7 +137,7 @@ export const experienceOptions: ExperienceOption[] = [
     name: "Crewcut",
     description: "Classic short structure with enough length for salon texture.",
     accent: "#586f5c",
-    providerField: "style_id"
+    localField: "style_id"
   },
   {
     id: "curtain",
@@ -152,7 +145,7 @@ export const experienceOptions: ExperienceOption[] = [
     name: "Curtain",
     description: "A softer center-parted shape with movement through the front.",
     accent: "#315b78",
-    providerField: "style_id"
+    localField: "style_id"
   },
   {
     id: "goatee",
@@ -160,7 +153,7 @@ export const experienceOptions: ExperienceOption[] = [
     name: "Goatee",
     description: "Focused chin and moustache definition with a sharper mouth frame.",
     accent: "#7f4329",
-    providerField: "template_id"
+    localField: "template_id"
   },
   {
     id: "bandholz",
@@ -168,7 +161,7 @@ export const experienceOptions: ExperienceOption[] = [
     name: "Bandholz",
     description: "Fuller beard volume for a confident, statement grooming look.",
     accent: "#3f4b42",
-    providerField: "template_id"
+    localField: "template_id"
   },
   {
     id: "anchor",
@@ -176,7 +169,7 @@ export const experienceOptions: ExperienceOption[] = [
     name: "Anchor Beard",
     description: "Sculpted chin and moustache balance with precise edges.",
     accent: "#6b5a48",
-    providerField: "template_id"
+    localField: "template_id"
   }
 ];
 

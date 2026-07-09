@@ -15,7 +15,7 @@ export type ExperienceOption = {
   name: string;
   description: string;
   accent: string;
-  providerField?: string;
+  localField?: string;
 };
 
 export type ExperienceProduct = {
@@ -25,12 +25,11 @@ export type ExperienceProduct = {
   shortName: string;
   description: string;
   eyebrow: string;
-  endpointEnv: string;
   optionLabel?: string;
 };
 
 export type ExperienceResult = {
   imageUrl?: string;
   imageBase64?: string;
-  providerResponse: unknown;
+  aiResponse: unknown;
 };

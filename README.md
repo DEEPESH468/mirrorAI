@@ -1,46 +1,60 @@
 # MirrorAI
 
-MirrorAI is a production-focused Next.js 15 website for a premium unisex salon. Guests can upload a portrait or use their camera to access AI-powered skin analysis, virtual makeup try-on, hair color simulation, hairstyle try-on, beard styling, face shape analysis, hair diagnostics, and consultation-ready reports.
+MirrorAI is a production-focused Next.js 15 website for a premium unisex salon. Guests can upload a portrait or use their camera through the existing frontend while the backend is prepared for future self-hosted salon AI modules.
 
 The app is intentionally built for one classy salon brand. It is not a SaaS product and does not include authentication, payments, database storage, admin dashboards, booking, or multi-tenant accounts.
 
-## Stack
+## Architecture
 
-- Next.js 15 App Router
-- React 19
-- TypeScript strict mode
-- Tailwind CSS
-- Framer Motion
-- Lucide Icons
+- Frontend: Next.js 15 App Router, React 19, TypeScript strict mode, Tailwind CSS, Framer Motion, Lucide Icons
+- Local backend: Python FastAPI
+- Integration boundary: reusable Next.js proxy route and TypeScript service wrappers
+
+The browser posts images to the Next route `/api/ai/[product]`. Next forwards the multipart request to the local FastAPI backend at `MIRRORAI_AI_BACKEND_URL`. AI modules are intentionally scaffolded only and return structured `not_implemented` module statuses.
 
 ## Getting Started
+
+Install the web app:
 
 ```bash
 npm install
 cp .env.example .env.local
-npm run dev
+```
+
+Install the local AI backend:
+
+```bash
+python3 -m venv .venv
+. .venv/bin/activate
+pip install -r python/requirements.txt
+```
+
+Run the backend in one terminal:
+
+```bash
+npm run dev:ai
+```
+
+Run the web app in another terminal:
+
+```bash
+npm run dev:web
 ```
 
 Open `http://localhost:3000`.
 
-## YouCam Configuration
-
-Set these environment variables in `.env.local` with the endpoint paths from the YouCam API console:
+## Local Configuration
 
 ```bash
-YOUCAM_API_KEY=...
-YOUCAM_API_BASE_URL=...
-YOUCAM_SKIN_ANALYSIS_ENDPOINT=...
-YOUCAM_MAKEUP_ENDPOINT=...
-YOUCAM_HAIR_COLOR_ENDPOINT=...
-YOUCAM_HAIRSTYLE_ENDPOINT=...
-YOUCAM_BEARD_ENDPOINT=...
-YOUCAM_FACE_SHAPE_ENDPOINT=...
-YOUCAM_HAIR_ANALYSIS_ENDPOINT=...
-YOUCAM_API_TIMEOUT_MS=60000
+MIRRORAI_AI_BACKEND_URL=http://127.0.0.1:8000
+MIRRORAI_AI_TIMEOUT_MS=120000
 ```
 
-The app posts multipart form data to `/api/youcam/[product]`, where `[product]` is one of:
+No remote service key is required.
+
+## Supported Products
+
+The app posts multipart form data to `/api/ai/[product]`, where `[product]` is one of:
 
 - `skin-analysis`
 - `makeup`
@@ -50,45 +64,33 @@ The app posts multipart form data to `/api/youcam/[product]`, where `[product]` 
 - `face-shape`
 - `hair-analysis`
 
-Payloads always include `image`, `product`, and `productName`. Try-on modules also include option metadata and provider-style fields where applicable:
+Payloads always include `image`, `product`, and `productName`. Try-on modules also include option metadata and local style fields where applicable:
 
 - Makeup: `look_id`, `optionId`, `optionName`
 - Hair color: `color_id`, `optionId`, `optionName`
 - Hairstyle: `style_id`, `optionId`, `optionName`
 - Beard: `template_id`, `optionId`, `optionName`
 
-If your API console shows different field names, update `src/lib/styles.ts` for option field mapping or `src/components/try-on/try-on-experience.tsx` for request assembly.
-
-Proxy responses are normalized into:
+The scaffold backend returns:
 
 ```ts
 {
-  imageUrl?: string;
   imageBase64?: string;
-  providerResponse: unknown;
+  aiResponse: {
+    engine: string;
+    status: "not_implemented";
+    modules: Array<unknown>;
+  };
+  report: Record<string, unknown>;
 }
 ```
-
-Keep the API key server-only. Do not expose it with a `NEXT_PUBLIC_` prefix.
-
-## Official YouCam Links
-
-- Platform: https://yce.makeupar.com/ai-api
-- API console: https://yce.makeupar.com/api-console/en/
-- Pricing: https://yce.makeupar.com/ai-api/api-pricing
-- Skin Analysis API: https://yce.makeupar.com/ai-api/products/skin-analysis-api
-- Virtual Makeup Try-On API: https://yce.makeupar.com/ai-api/products/virtual-makeup-try-on-api
-- Hair Color Changer API: https://yce.makeupar.com/ai-api/products/api-hair-color-changer
-- Hairstyle API: https://yce.makeupar.com/ai-api/products/ai-hairstyle-api
-- Beard API: https://yce.makeupar.com/ai-api/products/ai-beard-styles-api
-- Face Shape Detector API: https://yce.makeupar.com/ai-api/products/face-shape-detector-api
 
 ## Project Structure
 
 ```text
 src/
   app/
-    api/youcam/[product]/route.ts
+    api/ai/[product]/route.ts
     try-on/page.tsx
     layout.tsx
     page.tsx
@@ -97,8 +99,34 @@ src/
     try-on/
     ui/
   lib/
+    ai/
+      face.ts
+      hairstyle.ts
+      beard.ts
+      hairColor.ts
+      makeup.ts
+      skin.ts
+      recommendation.ts
+      consultation.ts
     styles.ts
-    youcam.ts
   types/
     try-on.ts
+
+python/
+  main.py
+  routers/
+    experience.py
+  models/
+    schemas.py
+  services/
+    assets.py
+    consultation.py
+    face.py
+    hair.py
+    makeup.py
+    recommendation.py
+    skin.py
+  utils/
+    image.py
+  requirements.txt
 ```

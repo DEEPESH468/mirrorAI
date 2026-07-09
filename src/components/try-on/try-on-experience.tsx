@@ -82,8 +82,8 @@ export function TryOnExperience() {
         : `data:image/jpeg;base64,${result.imageBase64}`
       : undefined);
   const reportItems = useMemo(
-    () => buildReportItems(result?.providerResponse),
-    [result?.providerResponse]
+    () => buildReportItems(result?.aiResponse),
+    [result?.aiResponse]
   );
 
   function stopCamera() {
@@ -171,8 +171,8 @@ export function TryOnExperience() {
     formData.append("productName", product.name);
 
     if (selectedOption) {
-      if (selectedOption.providerField) {
-        formData.append(selectedOption.providerField, selectedOption.id);
+      if (selectedOption.localField) {
+        formData.append(selectedOption.localField, selectedOption.id);
       }
 
       formData.append("optionId", selectedOption.id);
@@ -180,7 +180,7 @@ export function TryOnExperience() {
     }
 
     try {
-      const response = await fetch(`/api/youcam/${category}`, {
+      const response = await fetch(`/api/ai/${category}`, {
         method: "POST",
         body: formData
       });
@@ -409,8 +409,8 @@ export function TryOnExperience() {
                       <Spinner />
                       <p className="mt-4 font-semibold">Preparing {product.shortName}</p>
                       <p className="mt-2 max-w-sm text-sm leading-6 text-white/62">
-                        Your AI salon experience is being prepared through the
-                        configured YouCam endpoint.
+                        Your AI salon experience is being prepared by the local
+                        self-hosted computer vision backend.
                       </p>
                     </motion.div>
                   ) : result ? (
