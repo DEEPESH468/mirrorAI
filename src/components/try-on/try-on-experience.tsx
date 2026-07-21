@@ -83,10 +83,10 @@ export function TryOnExperience() {
         : `data:image/jpeg;base64,${result.imageBase64}`
       : undefined);
   const reportItems = useMemo(
-    () => buildReportItems(result?.aiResponse),
-    [result?.aiResponse]
+  () => buildReportItems(result?.report),
+  [result?.report]
   );
-
+    
   function stopCamera() {
     streamRef.current?.getTracks().forEach((track) => track.stop());
     streamRef.current = null;
@@ -507,6 +507,7 @@ function ResultView({
               alt={`${productName} before`}
               className="absolute inset-0 h-full w-full object-contain"
             />
+
             <div
               className="absolute inset-0 overflow-hidden"
               style={{ clipPath: `inset(0 ${100 - comparison}% 0 0)` }}
@@ -518,85 +519,110 @@ function ResultView({
                 className="h-full w-full object-contain"
               />
             </div>
+
             <div
               className="pointer-events-none absolute bottom-0 top-0 w-px bg-white/80"
               style={{ left: `${comparison}%` }}
             />
+
             <input
               type="range"
               min="0"
               max="100"
               value={comparison}
               aria-label="Before and after comparison"
-              onChange={(event) => onComparisonChange(Number(event.target.value))}
+              onChange={(event) =>
+                onComparisonChange(Number(event.target.value))
+              }
               className="absolute inset-x-4 bottom-5 h-2 accent-white"
             />
           </div>
         ) : (
-          // eslint-disable-next-line @next/next/no-img-element
-          <img
-            src={resultSource}
-            alt={`${productName} AI result`}
-            className="h-full w-full object-contain"
-          />
+          <>
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src={resultSource}
+              alt={`${productName} AI result`}
+              className="h-full w-full object-contain"
+            />
+
+            {report && (
+              <div className="absolute inset-4 overflow-auto rounded-lg bg-black/70 p-4">
+                <h3 className="mb-4 text-xl font-semibold">
+                  AI Consultation Report
+                </h3>
+
+                <div className="space-y-3">
+                  {reportItems.map((item) => (
+                    <div
+                      key={item.label}
+                      className="rounded-lg border border-white/10 bg-white/5 p-3"
+                    >
+                      <div className="text-xs uppercase tracking-wider text-white/50">
+                        {item.label}
+                      </div>
+
+                      <pre className="mt-2 whitespace-pre-wrap break-words font-sans text-sm text-white">
+                        {item.value}
+                      </pre>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+          </>
         )}
+
         <a
           href={resultSource}
           download="mirrorai-salon-result.png"
           className="absolute right-4 top-4 inline-flex h-11 items-center gap-2 rounded-lg bg-white px-4 text-sm font-semibold text-[var(--ink)]"
         >
-          <Download aria-hidden="true" className="h-4 w-4" />
+          <Download className="h-4 w-4" />
           Save
         </a>
-        {report ? (
+
+        {report && (
           <a
             href={jsonDataUrl(report)}
             download="mirrorai-consultation-report.json"
             className="absolute right-4 top-[4.75rem] inline-flex h-11 items-center gap-2 rounded-lg bg-white px-4 text-sm font-semibold text-[var(--ink)]"
           >
-            <FileText aria-hidden="true" className="h-4 w-4" />
+            <FileText className="h-4 w-4" />
             JSON
           </a>
-        ) : null}
+        )}
       </div>
     );
   }
 
   return (
     <div className="w-full max-w-lg px-5 py-8">
-      <FileText aria-hidden="true" className="h-10 w-10 text-[#d8a06f]" />
-      <p className="mt-4 text-lg font-semibold">{productName} report</p>
-      <p className="mt-2 text-sm leading-6 text-white/62">
-        Structured provider results are ready for a personalized consultation
-        summary inside your salon journey.
+      <FileText className="h-10 w-10 text-[#d8a06f]" />
+
+      <p className="mt-4 text-lg font-semibold">
+        {productName} Report
       </p>
-      {report ? (
-        <a
-          href={jsonDataUrl(report)}
-          download="mirrorai-consultation-report.json"
-          className="mt-5 inline-flex h-11 items-center gap-2 rounded-lg bg-white px-4 text-sm font-semibold text-[var(--ink)]"
-        >
-          <Download aria-hidden="true" className="h-4 w-4" />
-          Download JSON
-        </a>
-      ) : null}
-      <div className="mt-6 grid gap-3">
+
+      <div className="mt-6 space-y-3">
         {reportItems.length > 0 ? (
           reportItems.map((item) => (
             <div
               key={item.label}
-              className="rounded-lg border border-white/10 bg-white/[.06] p-4"
+              className="rounded-lg border border-white/10 bg-white/5 p-4"
             >
-              <p className="text-xs uppercase tracking-[0.18em] text-white/45">
+              <div className="text-xs uppercase tracking-wider text-white/50">
                 {item.label}
-              </p>
-              <p className="mt-2 text-sm leading-6 text-white/84">{item.value}</p>
+              </div>
+
+              <pre className="mt-2 whitespace-pre-wrap break-words font-sans text-sm text-white">
+                {item.value}
+              </pre>
             </div>
           ))
         ) : (
-          <div className="rounded-lg border border-white/10 bg-white/[.06] p-4 text-sm leading-6 text-white/70">
-            The provider response did not expose simple top-level fields. Open
-            the API response in development to map the exact report fields.
+          <div className="rounded-lg border border-white/10 bg-white/5 p-4">
+            No report available.
           </div>
         )}
       </div>
@@ -604,7 +630,7 @@ function ResultView({
   );
 }
 
-function Panel({
+function Panel({  
   children,
   fill = false,
   icon,
@@ -638,21 +664,54 @@ function jsonDataUrl(report: Record<string, unknown>) {
   )}`;
 }
 
+function formatLabel(text: string) {
+  return text
+    .replace(/([A-Z])/g, " $1")
+    .replace(/^./, (c) => c.toUpperCase());
+}
+
+function formatValue(value: unknown, indent = ""): string {
+  if (value === null || value === undefined) return "";
+
+  if (
+    typeof value === "string" ||
+    typeof value === "number" ||
+    typeof value === "boolean"
+  ) {
+    return String(value);
+  }
+
+  if (Array.isArray(value)) {
+    return value
+      .map((item) => `${indent}• ${formatValue(item, indent + "  ")}`)
+      .join("\n");
+  }
+
+  if (typeof value === "object") {
+    return Object.entries(value as Record<string, unknown>)
+      .map(([key, val]) => {
+        if (typeof val === "object" && val !== null) {
+          return `${indent}${formatLabel(key)}\n${formatValue(
+            val,
+            indent + "  "
+          )}`;
+        }
+
+        return `${indent}${formatLabel(key)} : ${formatValue(val)}`;
+      })
+      .join("\n");
+  }
+
+  return String(value);
+}
+
 function buildReportItems(payload: unknown) {
   if (!payload || typeof payload !== "object") return [];
 
-  return Object.entries(payload as Record<string, unknown>)
-    .filter(([, value]) => {
-      const valueType = typeof value;
-      return (
-        valueType === "string" ||
-        valueType === "number" ||
-        valueType === "boolean"
-      );
+  return Object.entries(payload as Record<string, unknown>).map(
+    ([key, value]) => ({
+      label: formatLabel(key),
+      value: formatValue(value),
     })
-    .slice(0, 6)
-    .map(([key, value]) => ({
-      label: key.replaceAll("_", " "),
-      value: String(value)
-    }));
+  );
 }

@@ -33,16 +33,28 @@ export function isAiProduct(value: string): value is ExperienceCategory {
 }
 
 export function normalizeLocalAiResult(payload: unknown): LocalAiResult {
-  const record = payload && typeof payload === "object" ? (payload as Record<string, unknown>) : {};
+  const record =
+    payload && typeof payload === "object"
+      ? (payload as Record<string, unknown>)
+      : {};
 
   return {
-    imageUrl: typeof record.imageUrl === "string" ? record.imageUrl : undefined,
-    imageBase64: typeof record.imageBase64 === "string" ? record.imageBase64 : undefined,
+    imageUrl:
+      typeof record.imageUrl === "string"
+        ? record.imageUrl
+        : undefined,
+
+    imageBase64:
+      typeof record.imageBase64 === "string"
+        ? record.imageBase64
+        : undefined,
+
     aiResponse: record.aiResponse ?? record,
+
     report:
       record.report && typeof record.report === "object"
         ? (record.report as Record<string, unknown>)
-        : undefined
+        : record
   };
 }
 
