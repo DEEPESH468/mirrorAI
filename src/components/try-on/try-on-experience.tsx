@@ -673,9 +673,16 @@ function formatLabel(text: string) {
 function formatValue(value: unknown, indent = ""): string {
   if (value === null || value === undefined) return "";
 
+  if (typeof value === "number") {
+    if (value >= 0 && value <= 1) {
+      return `${(value * 100).toFixed(1)}%`;
+    }
+
+    return String(value);
+  }
+
   if (
     typeof value === "string" ||
-    typeof value === "number" ||
     typeof value === "boolean"
   ) {
     return String(value);
@@ -705,13 +712,13 @@ function formatValue(value: unknown, indent = ""): string {
   return String(value);
 }
 
-function buildReportItems(payload: unknown) {
-  if (!payload || typeof payload !== "object") return [];
+function buildReportItems(
+  report?: Record<string, unknown>
+): Array<{ label: string; value: string }> {
+  if (!report) return [];
 
-  return Object.entries(payload as Record<string, unknown>).map(
-    ([key, value]) => ({
-      label: formatLabel(key),
-      value: formatValue(value),
-    })
-  );
+  return Object.entries(report).map(([key, value]) => ({
+    label: formatLabel(key),
+    value: formatValue(value)
+  }));
 }
